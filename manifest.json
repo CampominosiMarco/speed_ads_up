@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Speed Ads UP!",
+  "description": "This is an extension that increase speed of an ads to max level!",
+  "version": "1.0",
+  "icons": {
+    "16": "images/CM-InnovationLab.it_logo_mini.png",
+    "48": "images/CM-InnovationLab.it_logo_mini.png",
+    "128": "images/CM-InnovationLab.it_logo_mini.png"
+  },
+
+  "permissions": ["tabs"],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": "images/CM-InnovationLab.it_logo_mini.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["scripts/content.js"]
+    }
+  ]
+}
