@@ -1,5 +1,6 @@
 let song = "";
 let count = 0;
+let next = 0;
 
 
 //Listener for message from background
@@ -7,6 +8,7 @@ chrome.runtime.onMessage.addListener(function(message) {
   if (message.yt_title) {
     song = message.yt_title;
     count = 0;
+    next = 0;
   }
 });
 
@@ -16,6 +18,13 @@ function checkForAdBadgeAndSpeed() {
   const adBadgeElement = document.querySelector('.ytp-ad-simple-ad-badge');
 
   if (adBadgeElement) {
+
+/*
+    if (adBadgeElement.style.display === "none") {
+      count = 0;
+      return;
+    }
+*/
 
     const controller = document.querySelector('.vsc-controller');
 
@@ -31,16 +40,16 @@ function checkForAdBadgeAndSpeed() {
 
           const button = controllerDiv.querySelector('button[data-action="faster"]');
 
-          if (button) {
+          if (button && (count <= 51)) {
 
-            if (count < 31){
+            for (count; count <= 51; count++) {
               button.click();
-              count = count + 1
-
-              if (count == 31){
-                console.log("SPEED UP!");
-              }
             }
+
+            chrome.runtime.sendMessage({ msg: "AD SPEED UP!" });
+
+      //      console.log("AD SPEED UP!");
+
           }
         }
       }
@@ -55,7 +64,8 @@ function checkForSkipButtonAndClick() {
 
   if (skipButton) {
     skipButton.click();
-    console.log("SKIP AD button clicked");
+    chrome.runtime.sendMessage({ msg: "SKIP AD button clicked" });
+  //  console.log("SKIP AD button clicked");
   }
 }
 
@@ -68,11 +78,13 @@ function checkForSkipNextAndClick() {
 
     const spanChild = headerDiv.querySelector('span');
 
-    if (spanChild) {
+    if (spanChild && next == 0) {
 
       const buttonNext = document.querySelector('a.ytp-autonav-endscreen-upnext-button');
       buttonNext.click();
-      console.log("NEXT button clicked");
+      chrome.runtime.sendMessage({ msg: "NEXT button clicked" });
+    //  console.log("NEXT button clicked");
+      next = 1
     }
   }
 }
@@ -83,8 +95,8 @@ function mutationCallback(mutationsList) {
   for(const mutation of mutationsList) {
       if (mutation.type === 'childList') {
         checkForSkipButtonAndClick();
-        checkForAdBadgeAndSpeed();
         checkForSkipNextAndClick();
+        checkForAdBadgeAndSpeed();
       }
   }
 }

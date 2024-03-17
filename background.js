@@ -1,3 +1,6 @@
+let history = "";
+
+
 //Message at installation
 chrome.runtime.onInstalled.addListener(function() {
     const now = new Date();
@@ -10,6 +13,7 @@ chrome.runtime.onInstalled.addListener(function() {
         second: '2-digit'
     });
     console.log('[' + formattedDateTime + '] Extension "' + chrome.runtime.getManifest().name + '" installed!');
+    history = '[' + formattedDateTime + '] Extension "' + chrome.runtime.getManifest().name + '" installed!';
 });
 
 
@@ -22,8 +26,30 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
         // Prepare some infos
         let temp_title = changeInfo.title.replace(/\s*-\s*YouTube$/, '');
         
+        history = history + '<br><span style = "color: white;">.:. ' + temp_title + ' .:.</span>';
+
         //Sending info to active Tab
         chrome.tabs.sendMessage(tabId, {yt_title: temp_title});
 
+    }
+});
+
+
+// Message from content script to update history
+chrome.runtime.onMessage.addListener(function(message) {
+    if(message.msg){
+        history = history + '<br><span style = "color: red; font-weight: bold">' + message.msg + '</span>';
+    }
+});
+
+
+// Message from popup to update DIV
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+    if (message.action === "getHistory") {
+
+        // Send Responce to popup
+        sendResponse({ msg: history });
+        return true;
+        
     }
 });

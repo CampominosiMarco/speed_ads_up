@@ -1,10 +1,8 @@
-/*chrome.runtime.onMessage.addListener(function(message) {
+function updateDiv(){
+  chrome.runtime.sendMessage({ action: "getHistory" }, function(response) {
     const messageDiv = document.getElementById('message');
-    if (message.type === 'adStarted') {
-      messageDiv.textContent = 'Advertisement in progress';
-    } else if (message.type === 'adEnded') {
-      messageDiv.textContent = 'Advertisement ended';
-    }
+    messageDiv.innerHTML = response.msg;
   });
-  
-*/
+}
+
+updateDiv();
